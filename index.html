@@ -15,212 +15,319 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <title>Lista Inteligente</title>
   <style>
-    :root {
-      --laranja: #F05A00;
-      --laranja-claro: #FFF4EC;
-      --laranja-borda: #FFD0A8;
-      --creme: #FDF8F2;
-      --creme2: #FAF0E4;
-      --marrom: #7A3A10;
-      --verde: #1A9B5A;
-      --verde-claro: #EDFBF4;
-      --vermelho: #C0392B;
-      --amarelo: #D4900A;
-      --texto: #2A1A08;
-      --texto2: #A07850;
-      --texto3: #C0A080;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--creme); color: var(--texto); min-height: 100dvh; max-width: 480px; margin: 0 auto; padding-bottom: 100px; }
-    .topo { background: var(--creme2); padding: 20px 20px 18px; border-bottom: 2px solid var(--laranja-borda); position: sticky; top: 0; z-index: 100; }
-    .topo-titulo { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; color: var(--texto); line-height: 1.1; margin-bottom: 3px; }
-    .topo-titulo em { font-style: italic; color: var(--laranja); }
-    .topo-sub { font-size: 12px; color: var(--texto2); }
-    .live { position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 5px; background: var(--laranja-claro); border: 1px solid var(--laranja-borda); padding: 4px 10px; border-radius: 99px; font-size: 11px; color: var(--laranja); font-weight: 600; }
-    .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--laranja); animation: p 1.8s infinite; }
-    @keyframes p { 0%,100%{opacity:1} 50%{opacity:.3} }
-    .corpo { padding: 16px 20px 60px; }
-    .orc-card { background: var(--laranja-claro); border: 1.5px solid var(--laranja-borda); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
-    .orc-label { font-size: 11px; color: var(--laranja); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-    .orc-row { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
-    .orc-rs { font-family: 'Fraunces', serif; font-size: 22px; color: var(--laranja); font-weight: 600; }
-    .orc-input { flex: 1; border: none; background: transparent; font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; color: var(--texto); outline: none; }
-    .orc-input::placeholder { color: #FFBF99; font-weight: 400; }
-    .prog-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .prog-esq { font-size: 12px; color: var(--marrom); }
-    .prog-dir { font-size: 12px; font-weight: 600; font-family: 'Fraunces', serif; transition: color .3s; }
-    .prog-track { height: 8px; background: #FFD8B8; border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
-    .prog-fill { height: 100%; border-radius: 99px; transition: width .4s cubic-bezier(.4,0,.2,1), background .3s; background: var(--laranja); }
-    .legenda { display: flex; gap: 12px; }
-    .leg { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--marrom); }
-    .leg-dot { width: 6px; height: 6px; border-radius: 50%; }
-    .alerta { border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; display: none; align-items: center; gap: 8px; line-height: 1.4; }
-    .alerta.warn { background: #FFF8E6; color: #7A5800; display: flex; border: 1.5px solid #FFD060; }
-    .alerta.danger { background: #FFF0EE; color: #8A2010; display: flex; border: 1.5px solid #FFAA88; }
-    .gastos-card { background: #fff; border: 1.5px solid #EDD8C0; border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
-    .gastos-header { padding: 8px 14px; background: var(--creme2); border-bottom: 1px solid #EDD8C0; font-size: 11px; color: var(--marrom); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-    .g-linha { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: .5px solid #F0E0D0; }
-    .g-linha:last-child { border-bottom: none; }
-    .g-icone { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-    .g-icone.a { background: var(--verde-claro); }
-    .g-icone.b { background: var(--laranja-claro); }
-    .g-info { flex: 1; min-width: 0; }
-    .g-nome { font-size: 13px; font-weight: 600; color: var(--texto); }
-    .g-desc { font-size: 11px; color: var(--texto2); margin-top: 1px; }
-    .g-val { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--texto); }
-    .add-card { background: #fff; border: 1.5px solid #EDD8C0; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
-    .add-label { font-size: 11px; color: var(--texto2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; font-weight: 600; }
-    .add-row { display: flex; gap: 8px; }
-    .add-input { flex: 2; border: 1.5px solid #DFC8B0; border-radius: 9px; padding: 10px 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--texto); background: #FDFAF6; outline: none; transition: border-color .2s; }
-    .add-input:focus { border-color: var(--laranja); }
-    .add-input::placeholder { color: var(--texto3); }
-    .add-input.p { flex: 1; font-family: 'Fraunces', serif; }
-    .add-btn { background: var(--laranja); color: #fff; border: none; border-radius: 9px; width: 44px; height: 44px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s, transform .1s; font-weight: 300; }
-    .add-btn:active { opacity: .85; transform: scale(.95); }
-    .lista-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .lista-label { font-size: 11px; color: var(--texto2); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
-    .limpar { font-size: 11px; color: var(--texto3); background: none; border: none; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color .15s; }
-    .limpar:hover { color: var(--vermelho); }
-    .item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #EDD8C0; animation: entra .2s ease; }
-    @keyframes entra { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
-    .item:last-child { border-bottom: none; }
-    .item.feito { opacity: .38; }
-    .item.feito .i-nome { text-decoration: line-through; color: var(--texto3); }
-    .ck { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--laranja-borda); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; font-size: 13px; color: #fff; }
-    .ck.ok { background: var(--laranja); border-color: var(--laranja); }
-    .i-info { flex: 1; min-width: 0; }
-    .i-nome { font-size: 15px; font-weight: 500; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .i-preco { font-size: 11px; color: var(--texto2); margin-top: 1px; font-family: 'Fraunces', serif; }
-    .qty { display: flex; align-items: center; gap: 6px; }
-    .qb { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #DFC8B0; background: transparent; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--texto2); transition: background .1s; }
-    .qb:active { background: var(--laranja-claro); }
-    .qn { font-size: 13px; font-weight: 600; min-width: 16px; text-align: center; font-family: 'Fraunces', serif; color: var(--texto); }
-    .del { background: transparent; border: none; cursor: pointer; color: var(--texto3); font-size: 14px; width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: color .15s; }
-    .del:active { color: var(--vermelho); }
-    .vazio { text-align: center; padding: 36px 0; color: var(--texto3); font-family: 'Fraunces', serif; font-style: italic; font-size: 15px; line-height: 2; }
-    .install-banner { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 440px; background: #fff; border: 1.5px solid var(--laranja-borda); border-radius: 14px; padding: 14px 16px; display: none; align-items: center; gap: 12px; z-index: 200; animation: slideUp .3s ease; box-shadow: 0 8px 32px rgba(240,90,0,0.15); }
-    @keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(12px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-    .install-text { flex: 1; font-size: 13px; color: var(--texto2); line-height: 1.4; }
-    .install-text strong { color: var(--texto); }
-    .install-btn { background: var(--laranja); color: #fff; border: none; border-radius: 9px; padding: 8px 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-    .install-close { background: none; border: none; color: var(--texto3); cursor: pointer; font-size: 18px; padding: 2px; flex-shrink: 0; }
-    .offline-badge { position: fixed; top: 0; left: 50%; transform: translateX(-50%); background: var(--amarelo); color: #fff; font-size: 12px; font-weight: 600; padding: 6px 16px; border-radius: 0 0 8px 8px; display: none; z-index: 300; }
-    .offline-badge.show { display: block; }
+    :root{--laranja:#F05A00;--laranja-claro:#FFF4EC;--laranja-borda:#FFD0A8;--creme:#FDF8F2;--creme2:#FAF0E4;--marrom:#7A3A10;--verde-claro:#EDFBF4;--vermelho:#C0392B;--amarelo:#D4900A;--texto:#2A1A08;--texto2:#A07850;--texto3:#C0A080;}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--creme);color:var(--texto);max-width:480px;margin:0 auto;min-height:100dvh;padding-bottom:60px;}
+    .topo{background:var(--creme2);padding:20px 20px 18px;border-bottom:2px solid var(--laranja-borda);position:sticky;top:0;z-index:100;}
+    .topo-titulo{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--texto);margin-bottom:3px;}
+    .topo-titulo em{font-style:italic;color:var(--laranja);}
+    .topo-sub{font-size:12px;color:var(--texto2);}
+    .back-btn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--laranja);padding:0;margin-right:8px;vertical-align:middle;}
+    .live{float:right;display:flex;align-items:center;gap:5px;background:var(--laranja-claro);border:1px solid var(--laranja-borda);padding:4px 10px;border-radius:99px;font-size:11px;color:var(--laranja);font-weight:600;}
+    .dot{width:5px;height:5px;border-radius:50%;background:var(--laranja);animation:p 1.8s infinite;}
+    @keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+    .corpo{padding:16px 20px 40px;}
+    .sec-label{font-size:11px;color:var(--texto2);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:10px;}
+    .mercado-card{background:#fff;border:1.5px solid #EDD8C0;border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s;}
+    .mercado-card:active{border-color:var(--laranja);}
+    .m-emoji{font-size:24px;flex-shrink:0;}
+    .m-info{flex:1;min-width:0;}
+    .m-nome{font-size:16px;font-weight:600;color:var(--texto);}
+    .m-meta{font-size:12px;color:var(--texto2);margin-top:2px;}
+    .m-del{background:none;border:none;cursor:pointer;color:var(--texto3);font-size:16px;padding:4px;flex-shrink:0;}
+    .m-del:active{color:var(--vermelho);}
+    .add-m-btn{background:var(--laranja);color:#fff;border:none;border-radius:14px;width:100%;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;transition:opacity .15s;}
+    .add-m-btn:active{opacity:.85;}
+    .vazio-home{text-align:center;padding:40px 0;color:var(--texto3);font-family:'Fraunces',serif;font-style:italic;font-size:15px;line-height:2;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+    .overlay.show{display:flex;}
+    .modal{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;}
+    .modal h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-bottom:14px;color:var(--texto);}
+    .m-input{width:100%;border:1.5px solid #DFC8B0;border-radius:9px;padding:12px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:var(--texto);background:#FDFAF6;outline:none;margin-bottom:12px;transition:border-color .2s;}
+    .m-input:focus{border-color:var(--laranja);}
+    .m-input::placeholder{color:var(--texto3);}
+    .emojis{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+    .e-btn{width:40px;height:40px;border-radius:10px;border:1.5px solid #EDD8C0;background:#FDFAF6;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .e-btn.sel{border-color:var(--laranja);background:var(--laranja-claro);}
+    .modal-btns{display:flex;gap:8px;}
+    .btn-cancel{flex:1;background:none;border:1.5px solid #EDD8C0;border-radius:9px;padding:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:var(--texto2);cursor:pointer;}
+    .btn-ok{flex:2;background:var(--laranja);color:#fff;border:none;border-radius:9px;padding:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+    .orc-card{background:var(--laranja-claro);border:1.5px solid var(--laranja-borda);border-radius:14px;padding:14px 16px;margin-bottom:12px;}
+    .orc-label{font-size:11px;color:var(--laranja);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:600;}
+    .orc-row{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+    .orc-rs{font-family:'Fraunces',serif;font-size:22px;color:var(--laranja);font-weight:600;}
+    .orc-in{flex:1;border:none;background:transparent;font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--texto);outline:none;}
+    .orc-in::placeholder{color:#FFBF99;font-weight:400;}
+    .ph{display:flex;justify-content:space-between;margin-bottom:6px;}
+    .ph span:first-child{font-size:12px;color:var(--marrom);}
+    .ph span:last-child{font-size:12px;font-weight:600;font-family:'Fraunces',serif;transition:color .3s;}
+    .pt{height:8px;background:#FFD8B8;border-radius:99px;overflow:hidden;margin-bottom:8px;}
+    .pf{height:100%;border-radius:99px;transition:width .4s,background .3s;background:var(--laranja);}
+    .leg{display:flex;gap:12px;}
+    .li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--marrom);}
+    .ld{width:6px;height:6px;border-radius:50%;}
+    .alerta{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;display:none;align-items:center;gap:8px;line-height:1.4;}
+    .alerta.warn{background:#FFF8E6;color:#7A5800;display:flex;border:1.5px solid #FFD060;}
+    .alerta.danger{background:#FFF0EE;color:#8A2010;display:flex;border:1.5px solid #FFAA88;}
+    .gc{background:#fff;border:1.5px solid #EDD8C0;border-radius:14px;overflow:hidden;margin-bottom:12px;}
+    .gh{padding:8px 14px;background:var(--creme2);border-bottom:1px solid #EDD8C0;font-size:11px;color:var(--marrom);text-transform:uppercase;letter-spacing:.07em;font-weight:600;display:flex;align-items:center;gap:6px;}
+    .gl{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:.5px solid #F0E0D0;}
+    .gl:last-child{border-bottom:none;}
+    .gi{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .gi.a{background:var(--verde-claro);}
+    .gi.b{background:var(--laranja-claro);}
+    .gn{font-size:13px;font-weight:600;color:var(--texto);}
+    .gd{font-size:11px;color:var(--texto2);margin-top:1px;}
+    .gv{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--texto);}
+    .ac{background:#fff;border:1.5px solid #EDD8C0;border-radius:14px;padding:14px;margin-bottom:12px;}
+    .acl{font-size:11px;color:var(--texto2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-weight:600;}
+    .acol{display:flex;flex-direction:column;gap:8px;}
+    .ar{display:flex;gap:8px;}
+    .ai{width:100%;border:1.5px solid #DFC8B0;border-radius:9px;padding:11px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:var(--texto);background:#FDFAF6;outline:none;transition:border-color .2s;}
+    .ai:focus{border-color:var(--laranja);}
+    .ai::placeholder{color:var(--texto3);}
+    .ai.p{font-family:'Fraunces',serif;flex:1;}
+    .ab{background:var(--laranja);color:#fff;border:none;border-radius:9px;height:46px;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;width:54px;transition:opacity .15s;}
+    .ab:active{opacity:.85;}
+    .lt{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .ll{font-size:11px;color:var(--texto2);text-transform:uppercase;letter-spacing:.07em;font-weight:600;}
+    .lc{font-size:11px;color:var(--texto3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;}
+    .item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #EDD8C0;animation:entra .2s ease;}
+    @keyframes entra{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+    .item:last-child{border-bottom:none;}
+    .item.feito{opacity:.38;}
+    .item.feito .in{text-decoration:line-through;color:var(--texto3);}
+    .ck{width:28px;height:28px;border-radius:50%;border:2px solid var(--laranja-borda);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:13px;color:#fff;}
+    .ck.ok{background:var(--laranja);border-color:var(--laranja);}
+    .ii{flex:1;min-width:0;}
+    .in{font-size:15px;font-weight:500;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ip{font-size:11px;color:var(--texto2);margin-top:1px;font-family:'Fraunces',serif;}
+    .qty{display:flex;align-items:center;gap:6px;}
+    .qb{width:26px;height:26px;border-radius:50%;border:1px solid #DFC8B0;background:transparent;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--texto2);}
+    .qb:active{background:var(--laranja-claro);}
+    .qn{font-size:13px;font-weight:600;min-width:16px;text-align:center;font-family:'Fraunces',serif;color:var(--texto);}
+    .dl{background:transparent;border:none;cursor:pointer;color:var(--texto3);font-size:14px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+    .dl:active{color:var(--vermelho);}
+    .vazio{text-align:center;padding:36px 0;color:var(--texto3);font-family:'Fraunces',serif;font-style:italic;font-size:15px;line-height:2;}
+    .offline-badge{position:fixed;top:0;left:50%;transform:translateX(-50%);background:var(--amarelo);color:#fff;font-size:12px;font-weight:600;padding:6px 16px;border-radius:0 0 8px 8px;display:none;z-index:300;}
+    .offline-badge.show{display:block;}
   </style>
 </head>
 <body>
+ 
 <div class="offline-badge" id="offline-badge">📶 Sem internet — funcionando offline</div>
-<header class="topo">
-  <div class="live"><div class="dot"></div>ao vivo</div>
-  <div class="topo-titulo">Lista <em>inteligente</em></div>
-  <div class="topo-sub">Controle seus gastos no mercado</div>
-</header>
-<main class="corpo">
-  <div class="orc-card">
-    <div class="orc-label">💰 Quanto posso gastar hoje?</div>
-    <div class="orc-row">
-      <span class="orc-rs">R$</span>
-      <input class="orc-input" type="number" id="budget" placeholder="300" min="0" step="10" inputmode="decimal" />
-    </div>
-    <div class="prog-header">
-      <span class="prog-esq">Já no carrinho</span>
-      <span class="prog-dir" id="pct" style="color:var(--texto3)">—</span>
-    </div>
-    <div class="prog-track"><div class="prog-fill" id="barra" style="width:0%"></div></div>
-    <div class="legenda">
-      <div class="leg"><div class="leg-dot" style="background:var(--laranja)"></div>Dentro</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--amarelo)"></div>Quase</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--vermelho)"></div>Estourou</div>
-    </div>
+ 
+<!-- HOME -->
+<div id="home">
+  <div class="topo">
+    <div class="topo-titulo">Lista <em>inteligente</em></div>
+    <div class="topo-sub">Escolha o mercado para começar</div>
   </div>
-  <div class="alerta" id="alerta"><span id="ai"></span><span id="at"></span></div>
-  <div class="gastos-card">
-    <div class="gastos-header"><div class="dot"></div>atualiza conforme você marca</div>
-    <div class="g-linha">
-      <div class="g-icone a">🛒</div>
-      <div class="g-info">
-        <div class="g-nome">No carrinho agora</div>
-        <div class="g-desc" id="dc">Nenhum item marcado ainda</div>
-      </div>
-      <div class="g-val" id="vc">R$ 0,00</div>
-    </div>
-    <div class="g-linha">
-      <div class="g-icone b">📋</div>
-      <div class="g-info">
-        <div class="g-nome">Total da lista</div>
-        <div class="g-desc" id="dl">0 itens na lista</div>
-      </div>
-      <div class="g-val" id="vl">R$ 0,00</div>
-    </div>
+  <div class="corpo">
+    <div class="sec-label">Meus mercados</div>
+    <div id="mlist"></div>
+    <button class="add-m-btn" onclick="abrirModal()">+ Adicionar mercado</button>
   </div>
-  <div class="add-card">
-    <div class="add-label">Adicionar item</div>
-    <div class="add-row">
-      <input class="add-input" type="text" id="nome" placeholder="Nome do item" autocomplete="off" />
-      <input class="add-input p" type="number" id="preco" placeholder="R$ 0" min="0" step="0.01" inputmode="decimal" />
-      <button class="add-btn" onclick="add()" aria-label="Adicionar">+</button>
-    </div>
-  </div>
-  <div class="lista-topo">
-    <span class="lista-label" id="count">Itens</span>
-    <button class="limpar" onclick="limpar()">Limpar marcados</button>
-  </div>
-  <div id="lista"></div>
-</main>
-<div class="install-banner" id="install-banner">
-  <div class="install-text"><strong>Instalar no celular?</strong><br>Abre direto da tela inicial, sem navegador</div>
-  <button class="install-btn" onclick="instalar()">Instalar</button>
-  <button class="install-close" onclick="fecharInstall()" aria-label="Fechar">×</button>
 </div>
+ 
+<!-- LISTA -->
+<div id="lista-tela" style="display:none">
+  <div class="topo">
+    <div class="live"><div class="dot"></div>ao vivo</div>
+    <div>
+      <button class="back-btn" onclick="voltar()">←</button>
+      <span id="tnome" style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;"></span>
+    </div>
+    <div style="font-size:12px;color:var(--texto2);margin-top:2px;padding-left:32px;">Controle seus gastos</div>
+  </div>
+  <div class="corpo">
+    <div class="orc-card">
+      <div class="orc-label">💰 Quanto posso gastar hoje?</div>
+      <div class="orc-row">
+        <span class="orc-rs">R$</span>
+        <input class="orc-in" type="number" id="budget" placeholder="300" min="0" step="10" inputmode="decimal"/>
+      </div>
+      <div class="ph">
+        <span>Já no carrinho</span>
+        <span id="pct" style="color:var(--texto3)">—</span>
+      </div>
+      <div class="pt"><div class="pf" id="barra" style="width:0%"></div></div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:var(--laranja)"></div>Dentro</div>
+        <div class="li"><div class="ld" style="background:var(--amarelo)"></div>Quase</div>
+        <div class="li"><div class="ld" style="background:var(--vermelho)"></div>Estourou</div>
+      </div>
+    </div>
+    <div class="alerta" id="alerta"><span id="ai"></span><span id="at"></span></div>
+    <div class="gc">
+      <div class="gh"><div class="dot"></div>atualiza conforme você marca</div>
+      <div class="gl">
+        <div class="gi a">🛒</div>
+        <div style="flex:1"><div class="gn">No carrinho agora</div><div class="gd" id="dc">Nenhum marcado</div></div>
+        <div class="gv" id="vc">R$ 0,00</div>
+      </div>
+      <div class="gl">
+        <div class="gi b">📋</div>
+        <div style="flex:1"><div class="gn">Total da lista</div><div class="gd" id="dl">0 itens</div></div>
+        <div class="gv" id="vl">R$ 0,00</div>
+      </div>
+    </div>
+    <div class="ac">
+      <div class="acl">Adicionar item</div>
+      <div class="acol">
+        <input class="ai" type="text" id="nome" placeholder="Nome do item" autocomplete="off"/>
+        <div class="ar">
+          <input class="ai p" type="number" id="preco" placeholder="R$ 0,00" min="0" step="0.01" inputmode="decimal"/>
+          <button class="ab" onclick="add()">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="lt">
+      <span class="ll" id="count">Itens</span>
+      <button class="lc" onclick="limpar()">Limpar marcados</button>
+    </div>
+    <div id="lista"></div>
+  </div>
+</div>
+ 
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Novo mercado</h3>
+    <input class="m-input" type="text" id="mnome" placeholder="Nome do mercado (ex: Atacadão)"/>
+    <div class="emojis" id="emojis"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-ok" onclick="criar()">Criar</button>
+    </div>
+  </div>
+</div>
+ 
 <script>
-  let items=JSON.parse(localStorage.getItem('lista-items')||'[]');
-  let nid=parseInt(localStorage.getItem('lista-nid')||'1');
-  let budget=parseFloat(localStorage.getItem('lista-budget')||'0');
-  let deferredPrompt=null;
-  function sv(){localStorage.setItem('lista-items',JSON.stringify(items));localStorage.setItem('lista-nid',nid);localStorage.setItem('lista-budget',budget);}
-  function fmt(v){return'R$ '+v.toFixed(2).replace('.',',');}
-  function recalc(){
-    const tudo=items.reduce((s,i)=>s+i.p*i.q,0);
-    const feito=items.reduce((s,i)=>i.d?s+i.p*i.q:s,0);
-    const qf=items.filter(i=>i.d).length;
-    const qt=items.length;
-    document.getElementById('vc').textContent=fmt(feito);
-    document.getElementById('vl').textContent=fmt(tudo);
-    document.getElementById('dc').textContent=qf===0?'Nenhum item marcado ainda':qf+(qf===1?' item marcado':' itens marcados');
-    document.getElementById('dl').textContent=qt+(qt===1?' item na lista':' itens na lista');
-    const b=document.getElementById('barra'),p=document.getElementById('pct'),al=document.getElementById('alerta'),ai=document.getElementById('ai'),at=document.getElementById('at');
-    if(budget>0){
-      const pct=(feito/budget)*100,r=budget-feito;
-      b.style.width=Math.min(pct,100)+'%';
-      if(feito>budget){b.style.background='#C0392B';p.style.color='#C0392B';p.textContent=Math.round(pct)+'% — passou '+fmt(Math.abs(r));al.className='alerta danger';ai.textContent='⚠️';at.innerHTML='Passou do limite em <strong>'+fmt(Math.abs(r))+'</strong>. Retire um item ou aumente o orçamento.';}
-      else if(pct>=80){b.style.background='#D4900A';p.style.color='#A06800';p.textContent=Math.round(pct)+'% — faltam '+fmt(r);al.className='alerta warn';ai.textContent='⚡';at.innerHTML='Você usou '+Math.round(pct)+'% do orçamento. Faltam <strong>'+fmt(r)+'</strong>.';}
-      else{b.style.background='#F05A00';p.style.color='#A07850';p.textContent=Math.round(pct)+'% usado — faltam '+fmt(r);al.className='alerta';}
-    } else {b.style.width='0%';p.style.color='#C0A080';p.textContent='Digite um valor acima ↑';al.className='alerta';}
-  }
-  function render(){
-    const l=document.getElementById('lista'),c=document.getElementById('count');
-    c.textContent=items.length===0?'Itens':items.length+(items.length===1?' item':' itens');
-    if(items.length===0){l.innerHTML='<div class="vazio">Sua lista está vazia,<br>adicione o primeiro item acima</div>';recalc();return;}
-    l.innerHTML=items.map(i=>`<div class="item ${i.d?'feito':''}"><button class="ck ${i.d?'ok':''}" onclick="tog(${i.id})" aria-label="${i.d?'Desmarcar':'Marcar'}">${i.d?'✓':''}</button><div class="i-info"><div class="i-nome">${i.n}</div><div class="i-preco">${fmt(i.p)} × ${i.q} = ${fmt(i.p*i.q)}</div></div><div class="qty"><button class="qb" onclick="chq(${i.id},-1)" aria-label="Diminuir">−</button><span class="qn">${i.q}</span><button class="qb" onclick="chq(${i.id},+1)" aria-label="Aumentar">+</button></div><button class="del" onclick="rm(${i.id})" aria-label="Remover">✕</button></div>`).join('');
-    recalc();
-  }
-  function tog(id){const i=items.find(x=>x.id===id);if(i)i.d=!i.d;sv();render();}
-  function chq(id,d){const i=items.find(x=>x.id===id);if(i)i.q=Math.max(1,i.q+d);sv();render();}
-  function rm(id){items=items.filter(x=>x.id!==id);sv();render();}
-  function limpar(){items=items.filter(i=>!i.d);sv();render();}
-  function add(){const ne=document.getElementById('nome'),pe=document.getElementById('preco'),n=ne.value.trim(),p=parseFloat(pe.value)||0;if(!n){ne.focus();return;}items.unshift({id:nid++,n,p,q:1,d:false});ne.value='';pe.value='';ne.focus();sv();render();}
-  const be=document.getElementById('budget');
-  be.value=budget||'';
-  be.addEventListener('input',()=>{budget=parseFloat(be.value)||0;sv();recalc();});
-  document.getElementById('nome').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('preco').focus();});
-  document.getElementById('preco').addEventListener('keydown',e=>{if(e.key==='Enter')add();});
-  window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;setTimeout(()=>{document.getElementById('install-banner').style.display='flex';},3000);});
-  function instalar(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;fecharInstall();});}
-  function fecharInstall(){document.getElementById('install-banner').style.display='none';}
-  window.addEventListener('offline',()=>document.getElementById('offline-badge').classList.add('show'));
-  window.addEventListener('online',()=>document.getElementById('offline-badge').classList.remove('show'));
-  if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
-  render();
+const EMOJIS=['🏪','🛒','🥦','🍖','🧺','🏬','🛍️','🌽'];
+let esel='🏪';
+let mercados=JSON.parse(localStorage.getItem('li-m')||'[]');
+let atual=null;
+ 
+// emojis
+const emojisEl=document.getElementById('emojis');
+EMOJIS.forEach(e=>{
+  const b=document.createElement('button');
+  b.className='e-btn'+(e===esel?' sel':'');
+  b.textContent=e;
+  b.onclick=()=>{esel=e;document.querySelectorAll('.e-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');};
+  emojisEl.appendChild(b);
+});
+ 
+function sv(){localStorage.setItem('li-m',JSON.stringify(mercados));}
+function fmt(v){return'R$ '+v.toFixed(2).replace('.',',');}
+ 
+function abrirModal(){document.getElementById('mnome').value='';document.getElementById('overlay').classList.add('show');setTimeout(()=>document.getElementById('mnome').focus(),100);}
+function fecharModal(){document.getElementById('overlay').classList.remove('show');}
+ 
+function criar(){
+  const n=document.getElementById('mnome').value.trim();
+  if(!n){document.getElementById('mnome').focus();return;}
+  mercados.push({id:Date.now(),nome:n,emoji:esel,items:[],budget:0,nid:1});
+  sv();fecharModal();renderHome();
+}
+ 
+function renderHome(){
+  const l=document.getElementById('mlist');
+  if(mercados.length===0){l.innerHTML='<div class="vazio-home">Nenhum mercado ainda,<br>adicione o primeiro abaixo</div>';return;}
+  l.innerHTML=mercados.map(m=>{
+    const total=m.items.reduce((s,i)=>s+i.p*i.q,0);
+    const qt=m.items.length;
+    const meta=qt===0?'Lista vazia':qt+(qt===1?' item':' itens')+' · '+fmt(total);
+    return`<div class="mercado-card" onclick="abrir(${m.id})">
+      <span class="m-emoji">${m.emoji}</span>
+      <div class="m-info"><div class="m-nome">${m.nome}</div><div class="m-meta">${meta}</div></div>
+      <span style="color:var(--texto3);font-size:18px">›</span>
+      <button class="m-del" onclick="event.stopPropagation();deletar(${m.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+ 
+function deletar(id){
+  if(!confirm('Deletar este mercado e sua lista?'))return;
+  mercados=mercados.filter(m=>m.id!==id);sv();renderHome();
+}
+ 
+function abrir(id){
+  atual=mercados.find(m=>m.id===id);
+  if(!atual)return;
+  document.getElementById('home').style.display='none';
+  document.getElementById('lista-tela').style.display='block';
+  document.getElementById('tnome').textContent=atual.emoji+' '+atual.nome;
+  document.getElementById('budget').value=atual.budget||'';
+  renderLista();
+}
+ 
+function voltar(){
+  atual=null;
+  document.getElementById('home').style.display='block';
+  document.getElementById('lista-tela').style.display='none';
+  renderHome();
+}
+ 
+function recalc(){
+  if(!atual)return;
+  const items=atual.items;
+  const tudo=items.reduce((s,i)=>s+i.p*i.q,0);
+  const feito=items.reduce((s,i)=>i.d?s+i.p*i.q:s,0);
+  const qf=items.filter(i=>i.d).length,qt=items.length;
+  document.getElementById('vc').textContent=fmt(feito);
+  document.getElementById('vl').textContent=fmt(tudo);
+  document.getElementById('dc').textContent=qf===0?'Nenhum marcado ainda':qf+(qf===1?' item':' itens')+' marcados';
+  document.getElementById('dl').textContent=qt+(qt===1?' item':' itens')+' na lista';
+  const b=document.getElementById('barra'),p=document.getElementById('pct');
+  const al=document.getElementById('alerta'),ai=document.getElementById('ai'),at=document.getElementById('at');
+  const bg=atual.budget||0;
+  if(bg>0){
+    const pct=(feito/bg)*100,r=bg-feito;
+    b.style.width=Math.min(pct,100)+'%';
+    if(feito>bg){b.style.background='#C0392B';p.style.color='#C0392B';p.textContent=Math.round(pct)+'% — passou '+fmt(Math.abs(r));al.className='alerta danger';ai.textContent='⚠️';at.innerHTML='Passou do limite em <strong>'+fmt(Math.abs(r))+'</strong>.';}
+    else if(pct>=80){b.style.background='#D4900A';p.style.color='#A06800';p.textContent=Math.round(pct)+'% — faltam '+fmt(r);al.className='alerta warn';ai.textContent='⚡';at.innerHTML='Usou '+Math.round(pct)+'%. Faltam <strong>'+fmt(r)+'</strong>.';}
+    else{b.style.background='#F05A00';p.style.color='#A07850';p.textContent=Math.round(pct)+'% usado — faltam '+fmt(r);al.className='alerta';}
+  } else{b.style.width='0%';p.style.color='#C0A080';p.textContent='Digite um valor acima ↑';al.className='alerta';}
+}
+ 
+function renderLista(){
+  if(!atual)return;
+  const items=atual.items,l=document.getElementById('lista'),c=document.getElementById('count');
+  c.textContent=items.length===0?'Itens':items.length+(items.length===1?' item':' itens');
+  if(items.length===0){l.innerHTML='<div class="vazio">Lista vazia,<br>adicione o primeiro item acima</div>';recalc();return;}
+  l.innerHTML=items.map(i=>`<div class="item ${i.d?'feito':''}">
+    <button class="ck ${i.d?'ok':''}" onclick="tog(${i.id})">${i.d?'✓':''}</button>
+    <div class="ii"><div class="in">${i.n}</div><div class="ip">${fmt(i.p)} × ${i.q} = ${fmt(i.p*i.q)}</div></div>
+    <div class="qty"><button class="qb" onclick="chq(${i.id},-1)">−</button><span class="qn">${i.q}</span><button class="qb" onclick="chq(${i.id},+1)">+</button></div>
+    <button class="dl" onclick="rm(${i.id})">✕</button>
+  </div>`).join('');
+  recalc();
+}
+ 
+function tog(id){const i=atual.items.find(x=>x.id===id);if(i)i.d=!i.d;sv();renderLista();}
+function chq(id,d){const i=atual.items.find(x=>x.id===id);if(i)i.q=Math.max(1,i.q+d);sv();renderLista();}
+function rm(id){atual.items=atual.items.filter(x=>x.id!==id);sv();renderLista();}
+function limpar(){atual.items=atual.items.filter(i=>!i.d);sv();renderLista();}
+function add(){
+  const ne=document.getElementById('nome'),pe=document.getElementById('preco');
+  const n=ne.value.trim(),p=parseFloat(pe.value)||0;
+  if(!n){ne.focus();return;}
+  atual.items.unshift({id:atual.nid++,n,p,q:1,d:false});
+  ne.value='';pe.value='';ne.focus();sv();renderLista();
+}
+ 
+document.getElementById('budget').addEventListener('input',e=>{if(atual){atual.budget=parseFloat(e.target.value)||0;sv();recalc();}});
+document.getElementById('nome').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('preco').focus();});
+document.getElementById('preco').addEventListener('keydown',e=>{if(e.key==='Enter')add();});
+document.getElementById('mnome').addEventListener('keydown',e=>{if(e.key==='Enter')criar();});
+ 
+window.addEventListener('offline',()=>document.getElementById('offline-badge').classList.add('show'));
+window.addEventListener('online',()=>document.getElementById('offline-badge').classList.remove('show'));
+if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+ 
+renderHome();
 </script>
 </body>
 </html>
