@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#FDF8F2" />
-  <meta name="description" content="Controle seus gastos no mercado em tempo real" />
+  <meta name="description" content="Controle seus gastos em tempo real em tempo real" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Lista" />
+  <meta name="apple-mobile-web-app-title" content="Gastei" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <title>Lista Inteligente</title>
+  <title>Gastei</title>
   <style>
     :root{--laranja:#F05A00;--laranja-claro:#FFF4EC;--laranja-borda:#FFD0A8;--creme:#FDF8F2;--creme2:#FAF0E4;--marrom:#7A3A10;--verde-claro:#EDFBF4;--vermelho:#C0392B;--amarelo:#D4900A;--texto:#2A1A08;--texto2:#A07850;--texto3:#C0A080;}
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -39,7 +39,14 @@
     .add-m-btn{background:var(--laranja);color:#fff;border:none;border-radius:14px;width:100%;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;transition:opacity .15s;}
     .add-m-btn:active{opacity:.85;}
     .vazio-home{text-align:center;padding:40px 0;color:var(--texto3);font-family:'Fraunces',serif;font-style:italic;font-size:15px;line-height:2;}
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+    .welcome{text-align:center;padding:24px 0 16px;}
+    .welcome-icon{font-size:48px;margin-bottom:12px;}
+    .welcome-titulo{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--texto);margin-bottom:8px;}
+    .welcome-desc{font-size:14px;color:var(--texto2);line-height:1.6;margin-bottom:20px;}
+    .welcome-steps{display:flex;flex-direction:column;gap:10px;text-align:left;background:#fff;border:1.5px solid #EDD8C0;border-radius:14px;padding:14px 16px;}
+    .step{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--texto);}
+    .step-num{background:var(--laranja);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:flex-end;justify-content:center;} #overlay-confirm{align-items:center;} #overlay-confirm .modal{border-radius:16px;margin:20px;}
     .overlay.show{display:flex;}
     .modal{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;}
     .modal h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-bottom:14px;color:var(--texto);}
@@ -120,12 +127,13 @@
 <!-- HOME -->
 <div id="home">
   <div class="topo">
-    <div class="topo-titulo">Lista <em>inteligente</em></div>
+    <div class="topo-titulo">Gas<em>tei</em></div>
+    <div class="topo-sub">Quanto você gastou hoje?</div>
   </div>
   <div class="corpo">
-    <div class="sec-label">Meus mercados</div>
+    <div class="sec-label">Meus gastos</div>
     <div id="mlist"></div>
-    <button class="add-m-btn" onclick="abrirModal()">+ Adicionar mercado</button>
+    <button class="add-m-btn" onclick="abrirModal()">+ Adicionar local</button>
   </div>
 </div>
  
@@ -192,7 +200,7 @@
 <!-- MODAL -->
 <div class="overlay" id="overlay">
   <div class="modal">
-    <h3>Novo local</h3>
+    <h3>Novo local de gasto</h3>
     <input class="m-input" type="text" id="mnome" placeholder="Nome (ex: Atacadão, Drogasil...)"/>
     <div style="font-size:11px;color:#A07850;text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:8px;">Categoria</div>
     <div class="emojis" id="emojis"></div>
@@ -212,6 +220,18 @@
     <div class="modal-btns" style="margin-top:12px;">
       <button class="btn-cancel" onclick="fecharCustom()">Cancelar</button>
       <button class="btn-ok" onclick="salvarCustom()">Adicionar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL CONFIRMAR DELETE -->
+<div class="overlay" id="overlay-confirm">
+  <div class="modal">
+    <h3>Excluir local</h3>
+    <p id="confirm-msg" style="font-size:14px;color:#A07850;margin-bottom:20px;line-height:1.5;"></p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="fecharConfirm()">Cancelar</button>
+      <button id="confirm-ok" style="flex:2;background:#C0392B;color:#fff;border:none;border-radius:9px;padding:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Excluir</button>
     </div>
   </div>
 </div>
@@ -295,24 +315,44 @@ function criar(){
  
 function renderHome(){
   const l=document.getElementById('mlist');
-  if(mercados.length===0){l.innerHTML='<div class="vazio-home">Nenhum mercado ainda,<br>adicione o primeiro abaixo</div>';return;}
+  if(mercados.length===0){l.innerHTML=`<div class="welcome">
+    <div class="welcome-icon">💰</div>
+    <div class="welcome-titulo">Controle seus gastos</div>
+    <div class="welcome-desc">Adicione um local abaixo — mercado, farmácia, posto — e saiba exatamente quanto está gastando em tempo real.</div>
+    <div class="welcome-steps">
+      <div class="step"><span class="step-num">1</span><span>Adicione um local</span></div>
+      <div class="step"><span class="step-num">2</span><span>Coloque os itens e preços</span></div>
+      <div class="step"><span class="step-num">3</span><span>Marque conforme compra</span></div>
+    </div>
+  </div>`;return;}
   l.innerHTML=mercados.map(m=>{
     const total=m.items.reduce((s,i)=>s+i.p*i.q,0);
     const qt=m.items.length;
     const meta=qt===0?'Lista vazia':qt+(qt===1?' item':' itens')+' · '+fmt(total);
-    return`<div class="mercado-card" onclick="abrir(${m.id})">
-      <span class="m-emoji">${m.emoji}</span>
-      <div class="m-info"><div class="m-nome">${m.nome}</div><div class="m-meta">${meta}</div></div>
-      <span style="color:var(--texto3);font-size:18px">›</span>
-      <button class="m-del" onclick="event.stopPropagation();deletar(${m.id})">✕</button>
+    return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div class="mercado-card" onclick="abrir(${m.id})" style="margin-bottom:0;flex:1;">
+        <span class="m-emoji">${m.emoji}</span>
+        <div class="m-info"><div class="m-nome">${m.nome}</div><div class="m-meta">${meta}</div></div>
+        <span style="color:var(--texto3);font-size:18px">›</span>
+      </div>
+      <button onclick="deletar(${m.id})" style="background:#fff;border:1.5px solid #EDD8C0;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#C0A080;flex-shrink:0;">✕</button>
     </div>`;
   }).join('');
 }
  
 function deletar(id){
-  if(!confirm('Deletar este mercado e sua lista?'))return;
-  mercados=mercados.filter(m=>m.id!==id);sv();renderHome();
+  const m=mercados.find(x=>x.id===id);
+  if(!m)return;
+  document.getElementById('confirm-msg').textContent='Deseja realmente excluir "'+m.nome+'"? Todos os itens serão perdidos.';
+  document.getElementById('confirm-ok').onclick=()=>{
+    mercados=mercados.filter(x=>x.id!==id);
+    sv();
+    fecharConfirm();
+    renderHome();
+  };
+  document.getElementById('overlay-confirm').classList.add('show');
 }
+function fecharConfirm(){document.getElementById('overlay-confirm').classList.remove('show');}
  
 function abrir(id){
   atual=mercados.find(m=>m.id===id);
