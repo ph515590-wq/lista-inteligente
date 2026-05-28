@@ -208,6 +208,7 @@
   <div class="modal">
     <h3>Nova categoria</h3>
     <input class="m-input" type="text" id="custom-nome" placeholder="Nome (ex: Academia, Salão...)"/>
+ 
     <div class="modal-btns" style="margin-top:12px;">
       <button class="btn-cancel" onclick="fecharCustom()">Cancelar</button>
       <button class="btn-ok" onclick="salvarCustom()">Adicionar</button>
@@ -233,12 +234,12 @@ let mercados=JSON.parse(localStorage.getItem('li-m')||'[]');
 let atual=null;
  
 // emojis
-let customEmojis=JSON.parse(localStorage.getItem('li-custom-emojis')||'[]');
+ 
  
 function renderEmojis(){
   const emojisEl=document.getElementById('emojis');
   emojisEl.innerHTML='';
-  const todos=[...EMOJIS,...customEmojis];
+  const todos=[...EMOJIS];
   todos.forEach(({e,n})=>{
     const wrap=document.createElement('div');
     wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:3px;';
@@ -257,23 +258,7 @@ function renderEmojis(){
     wrap.appendChild(label);
     emojisEl.appendChild(wrap);
   });
-  const addWrap=document.createElement('div');
-  addWrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:3px;';
-  const addBtn=document.createElement('button');
-  addBtn.className='e-btn';
-  addBtn.textContent='+';
-  addBtn.style.cssText='font-size:20px;font-weight:300;color:#F05A00;';
-  addBtn.title='Adicionar categoria';
-  addBtn.onclick=()=>abrirCustom();
-  const addLabel=document.createElement('span');
-  addLabel.textContent='Novo';
-  addLabel.style.cssText='font-size:9px;color:#A07850;white-space:nowrap;opacity:0;transition:opacity .15s;pointer-events:none;';
-  addBtn.onmouseenter=()=>addLabel.style.opacity='1';
-  addBtn.onmouseleave=()=>addLabel.style.opacity='0';
-  addBtn.ontouchstart=()=>{addLabel.style.opacity='1';setTimeout(()=>addLabel.style.opacity='0',1200);};
-  addWrap.appendChild(addBtn);
-  addWrap.appendChild(addLabel);
-  emojisEl.appendChild(addWrap);
+ 
 }
  
 function abrirCustom(){
@@ -284,11 +269,11 @@ function abrirCustom(){
 function fecharCustom(){document.getElementById('overlay-custom').classList.remove('show');}
 function salvarCustom(){
   const n=document.getElementById('custom-nome').value.trim();
+  const e=n.charAt(0).toUpperCase();
   if(!n){document.getElementById('custom-nome').focus();return;}
-  const inicial=n.charAt(0).toUpperCase();
-  customEmojis.push({e:inicial,n});
+  customEmojis.push({e,n});
   localStorage.setItem('li-custom-emojis',JSON.stringify(customEmojis));
-  esel=inicial;
+  esel=e;
   fecharCustom();
   renderEmojis();
 }
