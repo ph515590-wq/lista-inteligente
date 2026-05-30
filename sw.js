@@ -1,4 +1,4 @@
-const CACHE = 'gastei-v1';
+const CACHE = 'gastei-v2';
  
 // Arquivos que precisam funcionar offline
 const ARQUIVOS = [
